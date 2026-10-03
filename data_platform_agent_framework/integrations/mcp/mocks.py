@@ -29,4 +29,7 @@ class MockMCPClient:
         elif tool_identity == "restart_bronze_pipeline":
             return {"result": "Pipeline restart initiated successfully."}
 
+        elif tool_identity == "run_dq_check":
+            return {"null_count": 0}
+
         raise ValueError(f"Unknown tool: {tool_identity}")

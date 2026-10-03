@@ -1,86 +1,38 @@
-from typing import Dict, Any, Tuple
 from core.agent_contract import AgentContract, AgentPurpose
-from core.observability import ObservabilityTracker
-from security.policy_engine import PolicyEngine
-from security.models import PolicyRequest, Identity
+from core.runtime import AgentRuntime
+from security.models import Identity
+from typing import Dict, Any
+from .skills import get_replication_investigation_skill
+from .workflows import get_investigation_workflow
 from integrations.mcp.adapters import get_replication_status_tool, get_bronze_pipeline_status_tool, get_restart_pipeline_tool
-from integrations.mcp.mocks import MockMCPClient
 
 class ReplicationMonitoringAgent:
-    def __init__(self, identity: Identity, policy_engine: PolicyEngine):
+    """
+    Domain-specific agent.
+    It does not contain platform orchestration or policy checks.
+    It registers its capabilities with the Runtime and invokes it.
+    """
+    def __init__(self, identity: Identity, runtime: AgentRuntime):
+        self.identity = identity
+        self.runtime = runtime
+
         self.contract = AgentContract(
             identity="repl-monitor-001",
             purpose=AgentPurpose.INVESTIGATION,
             domain="DataPlatform",
-            tools=["check_replication_status", "check_bronze_pipeline", "restart_bronze_pipeline"]
-        )
-        self.identity = identity
-        self.policy_engine = policy_engine
-        self.mcp_client = MockMCPClient()
-        self.tools_map = {
-            "check_replication_status": get_replication_status_tool(),
-            "check_bronze_pipeline": get_bronze_pipeline_status_tool(),
-            "restart_bronze_pipeline": get_restart_pipeline_tool()
-        }
-
-    def execute_tool_with_policy(self, tool_id: str, inputs: Dict[str, Any], tracker: ObservabilityTracker) -> Tuple[bool, Any]:
-        tool = self.tools_map.get(tool_id)
-        if not tool:
-            return False, "Tool not found"
-
-        req = PolicyRequest(
-            identity=self.identity,
-            agent_id=self.contract.identity,
-            tool_identity=tool.identity,
-            operation=tool.operation_type,
-            resource=str(inputs),
-            environment=tool.environment,
-            risk=tool.risk
+            tools=["check_replication_status", "check_bronze_pipeline", "restart_bronze_pipeline"],
+            skills=["replication_investigation"],
+            workflows=["investigate_replication_workflow"]
         )
 
-        decision = self.policy_engine.evaluate(req)
-        tracker.record_event("POLICY_EVALUATION", self.contract.identity, {"tool": tool_id, "decision": decision.allowed, "reason": decision.reason, "requires_approval": decision.requires_approval})
+        # Register domain specific components into the platform runtime
+        self.runtime.tool_registry.register("check_replication_status", get_replication_status_tool())
+        self.runtime.tool_registry.register("check_bronze_pipeline", get_bronze_pipeline_status_tool())
+        self.runtime.tool_registry.register("restart_bronze_pipeline", get_restart_pipeline_tool())
+        self.runtime.skill_registry.register("replication_investigation", get_replication_investigation_skill())
+        self.runtime.workflow_registry.register("investigate_replication_workflow", get_investigation_workflow())
 
-        if not decision.allowed:
-            return False, f"Policy Denied: {decision.reason}"
-
-        if decision.requires_approval:
-            return False, "Action requires out-of-band human approval."
-
-        # Execute tool via MCP
-        try:
-            result = self.mcp_client.execute_tool(tool_id, inputs)
-            tracker.record_event("TOOL_EXECUTION", self.contract.identity, {"tool": tool_id, "status": "SUCCESS"})
-            return True, result
-        except Exception as e:
-            tracker.record_event("TOOL_EXECUTION", self.contract.identity, {"tool": tool_id, "status": "ERROR", "error": str(e)})
-            return False, str(e)
-
-    def investigate(self, config_id: str, topic: str, tracker: ObservabilityTracker) -> Dict[str, Any]:
-        """Simulates an LLM agent reasoning loop."""
-        tracker.record_event("INVESTIGATION_START", self.contract.identity, {"config_id": config_id, "topic": topic})
-
-        # Step 1: Agent decides to check replication status
-        success, repl_result = self.execute_tool_with_policy("check_replication_status", {"config_id": config_id}, tracker)
-        if not success:
-            return {"diagnosis": "UNKNOWN", "reason": repl_result}
-
-        # Step 2: Agent interprets result
-        if repl_result.get("status") == "STOPPED":
-            # Agent infers pipeline might be failing too, checks bronze
-            tracker.record_event("AGENT_INFERENCE", self.contract.identity, {"inference": "Replication stopped, checking downstream pipeline"})
-
-            s2, bronze_result = self.execute_tool_with_policy("check_bronze_pipeline", {"topic": topic}, tracker)
-
-            if s2 and bronze_result.get("status") == "FAILED":
-                # Agent concludes incident
-                return {
-                    "diagnosis": "INCIDENT",
-                    "facts": {"replication": repl_result, "bronze": bronze_result},
-                    "inference": "Pipeline failure caused upstream replication to halt."
-                }
-
-        return {
-            "diagnosis": "HEALTHY",
-            "facts": {"replication": repl_result}
-        }
+    def investigate(self, config_id: str, topic: str) -> Dict[str, Any]:
+        initial_state = {"config_id": config_id, "topic": topic}
+        # Delegate entirely to the platform Runtime to execute the workflow
+        return self.runtime.execute_workflow(self.contract, self.identity, "investigate_replication_workflow", initial_state)
