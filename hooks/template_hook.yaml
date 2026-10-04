@@ -1,6 +1,0 @@
-name: template_pre_execution_hook
-type: pre-execution
-description: "A template hook that runs before an agent executes a tool."
-action: "validate_tool_input"
-parameters:
-  strict: true

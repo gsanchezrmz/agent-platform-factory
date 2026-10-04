@@ -1,0 +1,22 @@
+name: replication-incident-eval
+description: "Evaluates the Replication Agent's ability to investigate a systemic Databricks failure."
+version: 1.0.0
+agent: replication-monitoring-agent
+
+scenario:
+  mock_evidence:
+    hangfire_state: "SUCCESS"
+    nifi_state: "HEALTHY"
+    kafka_state: "LAGGING"
+    kafka_lag_value: 5000
+    databricks_state: "FAILED"
+
+expected_behavior:
+  - metric: intent_accuracy
+    condition: "Agent correctly initiates the replication-investigation-workflow."
+  - metric: skill_selection
+    condition: "Agent uses analyze-kafka-lag due to high lag value."
+  - metric: root_cause_accuracy
+    condition: "Agent infers 'Target Processing Failure' based on correlate-replication-state skill."
+  - metric: hallucination_check
+    condition: "Output contains explicit [FACT] and [INFERENCE] tags, and no facts are hallucinated beyond the mock evidence."

@@ -1,0 +1,22 @@
+name: get_nifi_processor_status
+description: "Retrieves the health and queue status of a specific NiFi processor."
+version: 1.0.0
+protocol: mcp
+server: nifi-mock-mcp
+action: "READ"
+
+parameters:
+  type: object
+  properties:
+    processor_id:
+      type: string
+      description: "The UUID of the NiFi processor."
+  required: ["processor_id"]
+
+returns:
+  type: object
+  properties:
+    queued_flowfiles:
+      type: integer
+    active_threads:
+      type: integer

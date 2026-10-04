@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "mcpServers": {
+    "hangfire-mock-mcp": {
+      "command": "python",
+      "args": ["-m", "domain.mock.hangfire_mcp"],
+      "trust_level": "INTERNAL_MOCK",
+      "description": "Mock MCP server returning Hangfire job statuses."
+    },
+    "nifi-mock-mcp": {
+      "command": "python",
+      "args": ["-m", "domain.mock.nifi_mcp"],
+      "trust_level": "INTERNAL_MOCK",
+      "description": "Mock MCP server returning NiFi processor stats."
+    },
+    "kafka-mock-mcp": {
+      "command": "python",
+      "args": ["-m", "domain.mock.kafka_mcp"],
+      "trust_level": "INTERNAL_MOCK",
+      "description": "Mock MCP server returning Kafka lag."
+    },
+    "databricks-mock-mcp": {
+      "command": "python",
+      "args": ["-m", "domain.mock.databricks_mcp"],
+      "trust_level": "INTERNAL_MOCK",
+      "description": "Mock MCP server returning Databricks pipeline state."
+    }
+  }
+}

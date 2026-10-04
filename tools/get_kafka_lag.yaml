@@ -1,0 +1,25 @@
+name: get_kafka_lag
+description: "Retrieves the current consumer lag for a given Kafka topic and consumer group."
+version: 1.0.0
+protocol: mcp
+server: kafka-mock-mcp
+action: "READ"
+
+parameters:
+  type: object
+  properties:
+    topic_name:
+      type: string
+      description: "The name of the Kafka topic."
+    consumer_group:
+      type: string
+      description: "The consumer group ID reading from the topic."
+  required: ["topic_name", "consumer_group"]
+
+returns:
+  type: object
+  properties:
+    current_lag:
+      type: integer
+    status:
+      type: string

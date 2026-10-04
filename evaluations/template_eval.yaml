@@ -1,6 +1,0 @@
-name: template_intent_eval
-description: "Evaluates if the agent correctly identified the user intent."
-metrics:
-  - name: intent_accuracy
-    type: boolean
-    expected: true
