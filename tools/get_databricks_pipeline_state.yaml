@@ -1,0 +1,22 @@
+name: get_databricks_pipeline_state
+description: "Retrieves the current execution state of a Databricks Delta Live Tables or Job pipeline."
+version: 1.0.0
+protocol: mcp
+server: databricks-mock-mcp
+action: "READ"
+
+parameters:
+  type: object
+  properties:
+    pipeline_id:
+      type: string
+      description: "The identifier for the Databricks pipeline."
+  required: ["pipeline_id"]
+
+returns:
+  type: object
+  properties:
+    job_state:
+      type: string
+    last_processed_timestamp:
+      type: string

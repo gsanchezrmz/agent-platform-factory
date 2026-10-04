@@ -1,20 +1,19 @@
 # Agent Guide
 
-This file provides programmatic and contextual instructions for AI Agents (like Claude, Codex, etc.) working within this repository.
+This file provides programmatic and contextual instructions for AI Agents (like GitHub Copilot, Claude, Gemini, Codex, etc.) working within this repository.
 
 ## Repository Context
-You are working inside the **Data Platform Agent Engineering Platform**.
-This is NOT a standard Python application. It is an artifact-driven framework.
+You are working inside the **Data Platform Agent Engineering Platform Factory**.
+This repository is the source of truth for Agent Engineering knowledge. It is completely decoupled from any specific LLM or Python execution runtime.
 
-## Your Responsibilities
-When creating or modifying capabilities within this platform, you MUST respect the architectural boundaries:
+## Your Primary Directive
+When a human developer asks you to implement a new feature, agent, or capability, **you must read and follow `rules/platform-engineering/artifact-evolution-and-reuse.md`**.
 
-1.  **Do not write Python logic to define Agents.** Agents, Skills, Workflows, Rules, and Policies MUST be defined declaratively in their respective folders (`agents/`, `skills/`, `workflows/`, etc.) using Markdown, YAML, or JSON.
-2.  **Skills are Markdown.** If you are asked to teach an agent how to do something, you write a `.md` file in `skills/`. You do not write a Python function.
-3.  **Python is for Runtime only.** Python code (in `platform/` or `domain/`) is strictly reserved for deterministic execution (loading artifacts, enforcing policies, executing API calls).
+You are expected to act as a Platform Engineer. You must:
+1.  Understand the 14-step Agent Engineering Process.
+2.  Categorize requested changes as REUSE, EXTEND, COMPOSE, NEW, INFRASTRUCTURE GAP, or EVALUATION GAP.
+3.  Propose the architecture using the `skills/platform/agent-architecture-design.md` skill.
+4.  **Never write Python code to define an Agent, Skill, or Workflow.** All agent logic belongs in explicit declarative artifacts (`.md`, `.yaml`, `.json`).
 
-## Validation Checks
-If you are modifying this repository, perform these checks:
-1.  Did I accidentally hardcode domain knowledge (like Kafka lag thresholds) into a Python file? (It belongs in a Skill).
-2.  Did I define the tool schema explicitly in `tools/` before trying to use it?
-3.  Does my new Agent definition properly reference existing or new Skills?
+## Harness Independence
+Do not write logic that assumes the presence of a specific LLM (like GPT-4) or a specific harness (like Copilot). The artifacts you create must be purely declarative and universally parseable.
