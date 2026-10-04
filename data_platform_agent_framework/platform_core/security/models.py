@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List
 from enum import Enum
-from core.tool import OperationType, RiskLevel
+from platform_core.core.tool import OperationType, RiskLevel
 
 class ApprovalStatus(Enum):
     PENDING = "PENDING"

@@ -1,0 +1,11 @@
+identity: "repl-monitor-001"
+purpose: "INVESTIGATION"
+domain: "DataPlatform"
+tools:
+  - "check_replication_status"
+  - "check_bronze_pipeline"
+  - "restart_bronze_pipeline"
+workflows:
+  - "investigate_replication_workflow"
+skills:
+  - "replication_investigation"

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 import time
 import json
 
@@ -24,13 +24,3 @@ class ObservabilityTracker:
 
     def get_events(self) -> List[ExecutionEvent]:
         return self.events
-
-    def dump_logs(self) -> str:
-        return json.dumps([
-            {
-                "type": e.event_type,
-                "agent": e.agent_id,
-                "ts": e.timestamp,
-                "meta": e.metadata
-            } for e in self.events
-        ], indent=2)

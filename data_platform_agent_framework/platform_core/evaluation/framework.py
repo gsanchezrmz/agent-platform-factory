@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Dict, Any, Callable
-from core.observability import ObservabilityTracker
+from platform_core.observability.observability import ObservabilityTracker
 
 @dataclass
 class EvaluationScenario:

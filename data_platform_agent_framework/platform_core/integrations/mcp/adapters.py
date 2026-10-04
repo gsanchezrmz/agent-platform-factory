@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Dict, Any
-from core.tool import Tool, OperationType, RiskLevel
+from platform_core.core.tool import Tool, OperationType, RiskLevel
 
 # These act as definitions for our FastMCP tools
 def get_replication_status_tool() -> Tool:

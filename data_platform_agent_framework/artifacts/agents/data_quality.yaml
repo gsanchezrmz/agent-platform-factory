@@ -1,0 +1,9 @@
+identity: "dq-monitor-001"
+purpose: "QUALITY"
+domain: "DataPlatform"
+tools:
+  - "run_dq_check"
+workflows:
+  - "evaluate_dq_workflow"
+skills:
+  - "data_profiling"

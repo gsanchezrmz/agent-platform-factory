@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from core.workflow import Workflow, WorkflowStep
+from platform_core.core.workflow import Workflow, WorkflowStep
 
 def run_dq_check_step(ctx: Dict[str, Any]) -> Any:
     exec_tool = ctx["execute_tool"]

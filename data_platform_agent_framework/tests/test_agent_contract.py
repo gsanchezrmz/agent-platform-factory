@@ -1,4 +1,4 @@
-from core.agent_contract import AgentContract, AgentPurpose
+from platform_core.core.agent_contract import AgentContract, AgentPurpose
 
 def test_contract_validation():
     contract = AgentContract(

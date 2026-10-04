@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Callable, Any, Dict
-from core.observability import ObservabilityTracker
+from platform_core.observability.observability import ObservabilityTracker
 
 @dataclass
 class WorkflowStep:

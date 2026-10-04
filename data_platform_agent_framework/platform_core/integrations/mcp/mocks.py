@@ -1,8 +1,6 @@
 from typing import Dict, Any
 
 class MockMCPClient:
-    """Simulates a FastMCP client calling external tools."""
-
     def __init__(self):
         self.mock_data = {
             "check_replication_status": {
@@ -16,20 +14,12 @@ class MockMCPClient:
         }
 
     def execute_tool(self, tool_identity: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        print(f"[MOCK MCP] Executing {tool_identity} with {inputs}")
-
         if tool_identity == "check_replication_status":
-            config_id = inputs.get("config_id")
-            return self.mock_data["check_replication_status"].get(config_id, {"status": "UNKNOWN", "lag_seconds": -1})
-
+            return self.mock_data["check_replication_status"].get(inputs.get("config_id"), {"status": "UNKNOWN", "lag_seconds": -1})
         elif tool_identity == "check_bronze_pipeline":
-            topic = inputs.get("topic")
-            return self.mock_data["check_bronze_pipeline"].get(topic, {"status": "UNKNOWN", "last_run": ""})
-
+            return self.mock_data["check_bronze_pipeline"].get(inputs.get("topic"), {"status": "UNKNOWN", "last_run": ""})
         elif tool_identity == "restart_bronze_pipeline":
             return {"result": "Pipeline restart initiated successfully."}
-
         elif tool_identity == "run_dq_check":
             return {"null_count": 0}
-
         raise ValueError(f"Unknown tool: {tool_identity}")

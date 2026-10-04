@@ -1,7 +1,7 @@
 import pytest
-from security.policy_engine import PolicyEngine
-from security.models import PolicyRequest, Identity, ApprovalStatus
-from core.tool import OperationType, RiskLevel
+from platform_core.security.policy_engine import PolicyEngine
+from platform_core.security.models import PolicyRequest, Identity, ApprovalStatus
+from platform_core.core.tool import OperationType, RiskLevel
 
 def test_viewer_denied_write():
     engine = PolicyEngine()
