@@ -1,0 +1,10 @@
+name: template_mvp_read_only_policy
+description: "Enforces strictly read-only operations for the MVP."
+rules:
+  - type: allow
+    action: "READ"
+    resources: ["*"]
+  - type: deny
+    action: "WRITE"
+    resources: ["*"]
+    reason: "MVP execution is strictly READ ONLY."

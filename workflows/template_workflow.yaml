@@ -1,0 +1,19 @@
+name: template_workflow
+description: "A declarative workflow demonstrating orchestration."
+version: 1.0.0
+
+steps:
+  - id: step_1
+    action: "gather_evidence"
+    description: "Use MCP tools to gather initial system state."
+    required: true
+
+  - id: step_2
+    action: "analyze_state"
+    description: "Analyze the gathered evidence using the template_skill."
+    required: true
+
+  - id: step_3
+    action: "report_findings"
+    description: "Output the final structured report."
+    required: true

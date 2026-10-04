@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "mock_system_mcp": {
+      "command": "python",
+      "args": ["-m", "domain.mock_mcp_server"],
+      "description": "A template MCP server configuration pointing to a mock adapter."
+    }
+  }
+}
