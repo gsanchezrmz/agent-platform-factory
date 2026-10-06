@@ -1,0 +1,33 @@
+name: platform-engineering-workflow
+description: "The declarative end-to-end orchestration workflow for designing, building, and reviewing new Agent Engineering capabilities."
+version: 1.0.0
+domain: platform-engineering
+
+steps:
+  - id: step_analyze_requirements
+    agent: platform-architect-agent
+    action: "analyze_and_propose"
+    description: "The Architect uses the 14-step process to inspect the repo and output a design proposal (REUSE/EXTEND/NEW)."
+    required: true
+
+  - id: step_human_approval
+    action: "wait_for_approval"
+    description: "Pause the workflow. Wait for the human developer to approve, reject, or modify the Architect's proposal."
+    required: true
+
+  - id: step_implement_artifacts
+    agent: platform-builder-agent
+    action: "generate_files"
+    description: "The Builder translates the approved design into syntax-perfect Markdown, YAML, and JSON files."
+    required: true
+
+  - id: step_audit_artifacts
+    agent: platform-reviewer-agent
+    action: "audit_files"
+    description: "The Reviewer acts as an adversarial gate, ensuring the Builder's output violates no architectural or security rules."
+    required: true
+
+  - id: step_finalize
+    action: "generate_report"
+    description: "If the audit passes, the artifacts are finalized."
+    required: true
