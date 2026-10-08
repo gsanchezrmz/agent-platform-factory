@@ -1,13 +1,19 @@
 name: platform-engineering-workflow
-description: "The declarative end-to-end orchestration workflow for designing, building, and reviewing new Agent Engineering capabilities."
-version: 1.0.0
+description: "The declarative end-to-end orchestration workflow for discovering environment topology, designing, building, and adversarially auditing new Agent Engineering capabilities."
+version: 2.0.0
 domain: platform-engineering
 
 steps:
-  - id: step_analyze_requirements
+  - id: step_discover_environment_context
+    agent: platform-architect-agent
+    action: "verify_or_populate_topology"
+    description: "Verify that the E2E topology and failure modes are documented in docs/architecture/. If incomplete, halt and clarify with human."
+    required: true
+
+  - id: step_analyze_and_propose
     agent: platform-architect-agent
     action: "analyze_and_propose"
-    description: "The Architect uses the 14-step process to inspect the repo and output a design proposal (REUSE/EXTEND/NEW)."
+    description: "The Architect executes the 14-step process and outputs a comprehensive design proposal with Component Anatomy mapping and evaluation strategies."
     required: true
 
   - id: step_human_approval
@@ -18,16 +24,16 @@ steps:
   - id: step_implement_artifacts
     agent: platform-builder-agent
     action: "generate_files"
-    description: "The Builder translates the approved design into syntax-perfect Markdown, YAML, and JSON files."
+    description: "The Builder translates the approved design into syntax-perfect Markdown, YAML, and JSON files without writing Python code."
     required: true
 
   - id: step_audit_artifacts
     agent: platform-reviewer-agent
     action: "audit_files"
-    description: "The Reviewer acts as an adversarial gate, ensuring the Builder's output violates no architectural or security rules."
+    description: "The Reviewer acts as an adversarial gate, ensuring the output respects the E2E topology, covers deceptive failure modes, and obeys read-only policies."
     required: true
 
   - id: step_finalize
     action: "generate_report"
-    description: "If the audit passes, the artifacts are finalized."
+    description: "If the audit passes, the artifacts are finalized and linked into the platform."
     required: true
