@@ -1,0 +1,34 @@
+name: replication-investigation-workflow
+description: "The standard declarative workflow for investigating a replication incident."
+version: 1.1.0
+agent: replication-monitoring-agent
+
+steps:
+  - id: step_parse_intent
+    action: "parse_user_request"
+    description: "Extract the pipeline_id or table_name and the environment from the user's prompt."
+    required: true
+
+  - id: step_gather_evidence
+    action: "execute_skill"
+    skill: "collect-replication-evidence"
+    description: "Invoke the tools to generate the Evidence Matrix."
+    required: true
+
+  - id: step_analyze_telemetry
+    action: "execute_skill"
+    skill: "log-analysis"
+    condition: "evidence_matrix contains errors, backlog, or lag"
+    description: "Use the generic log-analysis skill composed with the appropriate technology reference to understand the failure."
+    required: false
+
+  - id: step_correlate_and_conclude
+    action: "execute_skill"
+    skill: "correlate-replication-state"
+    description: "Synthesize the facts across systems and determine the root cause."
+    required: true
+
+  - id: step_report
+    action: "generate_report"
+    description: "Present the findings to the user, strictly adhering to the Fact vs Inference rule."
+    required: true

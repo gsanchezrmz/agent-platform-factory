@@ -1,0 +1,27 @@
+name: replication-mvp-policy
+description: "Security policy for the Replication Monitoring MVP. Enforces strict read-only execution."
+version: 1.0.0
+target: replication-monitoring-agent
+
+rules:
+  - id: allow_read_telemetry
+    type: allow
+    action: "READ"
+    resources:
+      - "hangfire:job_status"
+      - "nifi:processor_status"
+      - "kafka:topic_lag"
+      - "databricks:job_state"
+    reason: "Agent requires read access to telemetry to perform investigations."
+
+  - id: deny_write_operations
+    type: deny
+    action: "WRITE"
+    resources: ["*"]
+    reason: "MVP execution is strictly READ ONLY. Autonomous mutations are prohibited."
+
+  - id: deny_restart_operations
+    type: deny
+    action: "RESTART"
+    resources: ["*"]
+    reason: "Agent cannot restart jobs or clusters."

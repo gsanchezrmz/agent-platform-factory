@@ -1,0 +1,24 @@
+name: get_hangfire_job_status
+description: "Retrieves the status and execution time of a specific Hangfire replication job."
+version: 1.0.0
+protocol: mcp
+server: hangfire-mock-mcp
+action: "READ"
+
+parameters:
+  type: object
+  properties:
+    pipeline_id:
+      type: string
+      description: "The identifier for the replication pipeline."
+  required: ["pipeline_id"]
+
+returns:
+  type: object
+  properties:
+    status:
+      type: string
+    last_execution_time:
+      type: string
+    exception_details:
+      type: string

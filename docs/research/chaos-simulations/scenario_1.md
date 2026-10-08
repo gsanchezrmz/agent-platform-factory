@@ -1,0 +1,2 @@
+# Scenario 1: Cross-region Kafka failure vs SQL config drift
+Data is failing to replicate between US-East and EU-West Kafka clusters. The EU consumer shows 0 lag because no messages are arriving. The US producer logs show successful writes. The underlying issue is that the SQL Server configuration table tracking region active-status was manually toggled to 'inactive' by a DBA, causing the routing microservice to silently drop packets across the Atlantic.
