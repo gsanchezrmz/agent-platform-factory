@@ -18,19 +18,23 @@ To ensure that all new agents conform to the strict separation of concerns (Plat
     *   Workflows MUST be `.yaml` files in `workflows/`.
     *   Policies MUST be `.yaml` files in `policies/`.
 
-2.  **Analyze Dependencies:**
+2.  **Topology & Control Plane Validation:**
+    *   You MUST review the E2E Topology Map.
+    *   If the map identifies a Control Plane (e.g., Configuration DB, Routing Rules), you MUST propose Tools/MCP servers to query that Control Plane. Flag an **INFRASTRUCTURE GAP** if they do not exist. Do not rely solely on Data Plane telemetry.
+
+3.  **External Dependency Graph Validation:**
+    *   If the topology identifies IAM, Secret, or Network dependencies, you MUST NOT assume errors are isolated to the application layer. Propose explicit Tools/Skills to verify the health of these external dependencies (e.g., check if a Service Principal is expired).
+
+4.  **Shared Infrastructure (Noisy Neighbor) Validation:**
+    *   If the topology identifies Shared Compute or Storage, you MUST design Skills that analyze system-wide telemetry (e.g., CPU credit exhaustion across the entire Databricks cluster), not just pipeline-specific logs.
+
+5.  **Analyze Dependencies:**
     *   Before proposing a new Skill, check if the required Tool/MCP capability exists in `tools/` or `mcp/`. If it doesn't, you must flag an **INFRASTRUCTURE GAP**.
 
-3.  **Drafting the Proposal:**
+6.  **Drafting the Proposal:**
     When asked to build a new agent, format your proposal as follows:
     *   **Proposed Agent:** (Name and location)
     *   **Workflows (REUSE/NEW):** (List workflows to reuse or create)
-    *   **Skills (REUSE/EXTEND/NEW):** (List skills, e.g., "REUSE: analyze-kafka-lag, NEW: check-sql-config")
-    *   **Tools/MCP (GAPS):** (Identify what infrastructure adapters are required)
+    *   **Skills (REUSE/EXTEND/NEW):** (List skills, ensuring "Positive Heartbeats", "External Dependency", and "Shared Infrastructure" checks are included).
+    *   **Tools/MCP (GAPS):** (Identify what infrastructure adapters are required, explicitly separating Control Plane vs Data Plane tools)
     *   **Policies:** (Identify which policies apply, usually read-only for MVPs)
-
-## Example Scenario: SQL Config Investigation
-If a user asks: *"Investigate Kafka topics not receiving data because the SQL config is inactive."*
-1.  **Inspect:** You see `analyze-kafka-lag.md` exists.
-2.  **Gap:** You lack a skill to check SQL configs, and a tool to query SQL.
-3.  **Action:** Propose extending the `replication-investigation-workflow.yaml`, creating a NEW skill `analyze-sql-replication-config.md`, and flagging an INFRASTRUCTURE GAP for a `get_sql_record` tool.
